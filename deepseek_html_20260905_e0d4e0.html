@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bordro Hesaplama – Ekim 2026</title>
+    <style>
+        /* ----- RESET & GENEL ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background: #f4f7fc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .app {
+            max-width: 1300px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 20px 60px rgba(0, 20, 40, 0.10);
+            padding: 40px 35px;
+            transition: all 0.2s;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 600;
+            color: #0b1e33;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .subtitle {
+            color: #5e6f8d;
+            font-size: 15px;
+            margin-bottom: 30px;
+            border-left: 4px solid #2a7de1;
+            padding-left: 16px;
+            background: #f0f5fe;
+            border-radius: 0 12px 12px 0;
+            line-height: 1.4;
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        /* ----- FORM ----- */
+        .form-section {
+            background: #f9fbfe;
+            border-radius: 24px;
+            padding: 24px 28px;
+            border: 1px solid #e9edf4;
+        }
+
+        .form-section h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a2a44;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 20px;
+            margin-bottom: 18px;
+        }
+
+        .form-group {
+            flex: 1 1 160px;
+            min-width: 130px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #2c3e5c;
+            margin-bottom: 4px;
+            letter-spacing: 0.2px;
+        }
+
+        .form-group label .required {
+            color: #d14545;
+            margin-left: 2px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            background: #ffffff;
+            border: 1.5px solid #dce2ec;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #0b1e33;
+            transition: 0.15s;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #2a7de1;
+            box-shadow: 0 0 0 3px rgba(42, 125, 225, 0.15);
+        }
+
+        .form-group input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .form-group input[type="number"]::-webkit-outer-spin-button,
+        .form-group input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-top: 6px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #2a7de1;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a2a44;
+            cursor: pointer;
+        }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 14px;
+            background: #1a3a6b;
+            color: white;
+            font-size: 17px;
+            font-weight: 600;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-calculate:hover {
+            background: #0f2a4a;
+            transform: scale(1.01);
+            box-shadow: 0 8px 20px rgba(26, 58, 107, 0.25);
+        }
+
+        .btn-calculate:active {
+            transform: scale(0.98);
+        }
+
+        /* ----- BORDRO ÖZETİ ----- */
+        .summary-section {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 0;
+            border: 1px solid #e9edf4;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .summary-header {
+            background: #0b1e33;
+            color: white;
+            padding: 20px 28px;
+            border-radius: 24px 24px 0 0;
+        }
+
+        .summary-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: 0.3px;
+        }
+
+        .summary-header .ay-bilgisi {
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .summary-body {
+            padding: 24px 28px 28px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #edf2f9;
+            font-size: 15px;
+        }
+
+        .summary-item:last-of-type {
+            border-bottom: none;
+        }
+
+        .summary-item .label {
+            color: #3e5670;
+            font-weight: 500;
+        }
+
+        .summary-item .value {
+            font-weight: 600;
+            color: #0b1e33;
+        }
+
+        .summary-item .value.positive {
+            color: #1a7d3a;
+        }
+
+        .summary-item .value.negative {
+            color: #b33a3a;
+        }
+
+        .summary-divider {
+            height: 2px;
+            background: linear-gradient(to right, #e9edf4, #b0c4de, #e9edf4);
+            margin: 6px 0 10px;
+            border: 0;
+        }
+
+        .summary-total {
+            background: #f0f5fe;
+            border-radius: 16px;
+            padding: 14px 18px;
+            margin-top: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-total .label {
+            font-weight: 600;
+            font-size: 17px;
+            color: #0b1e33;
+        }
+
+        .summary-total .value {
+            font-weight: 700;
+            font-size: 24px;
+            color: #0f2a4a;
+        }
+
+        .summary-total .value.net {
+            color: #1a7d3a;
+        }
+
+        .summary-detail {
+            margin-top: 18px;
+            background: #fafcff;
+            border-radius: 14px;
+            padding: 14px 16px;
+            border: 1px dashed #d0dcee;
+            font-size: 13px;
+            color: #3e5670;
+        }
+
+        .summary-detail span {
+            font-weight: 500;
+            color: #0b1e33;
+        }
+
+        /* ----- RESPONSIVE ----- */
+        @media (max-width: 900px) {
+            .grid-2col {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .app {
+                padding: 24px 18px;
+            }
+
+            .form-group {
+                flex: 1 1 100%;
+            }
+
+            .summary-total .value {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-section {
+                padding: 18px 16px;
+            }
+            .summary-body {
+                padding: 16px;
+            }
+        }
+
+        /* ufak yardımcı */
+        .text-muted {
+            color: #6f85a3;
+            font-size: 13px;
+        }
+
+        .mt-1 {
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app">
+        <h1>🧾 Bordro Hesaplama</h1>
+        <div class="subtitle">
+            Ekim 2026 · Türkiye mevzuatına uygun · SGK tavanı 297.270 TL
+        </div>
+
+        <div class="grid-2col">
+            <!-- SOL: FORM -->
+            <div class="form-section">
+                <h2>📋 Çalışan Bilgileri</h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>İş Grubu <span class="required">*</span></label>
+                        <select id="grup">
+                            <option value="03.1">03.1</option>
+                            <option value="05.1">05.1</option>
+                            <option value="10.0.A">10.0.A</option>
+                            <option value="10.0.B">10.0.B</option>
+                            <option value="10.3" selected>10.3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Kademe <span class="required">*</span></label>
+                        <select id="kademe">
+                            <option value="A0">A0</option>
+                            <option value="A1">A1</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E" selected>E</option>
+                            <option value="F">F</option>
+                            <option value="G">G</option>
+                            <option value="H">H</option>
+                            <option value="I">I</option>
+                            <option value="J">J</option>
+                            <option value="K">K</option>
+                            <option value="L">L</option>
+                            <option value="M">M</option>
+                            <option value="N">N</option>
+                            <option value="O">O</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Kıdem Derecesi (1‑35) <span class="required">*</span></label>
+                        <input type="number" id="kidem" min="1" max="35" value="18" />
+                    </div>
+                    <div class="form-group">
+                        <label>Vardiya Tipi <span class="required">*</span></label>
+                        <select id="vardiya">
+                            <option value="ikili">İkili</option>
+                            <option value="uclu" selected>Üçlü</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Önceki Kümüle Vergi Matrahı (TL)</label>
+                        <input type="number" id="oncekiKumule" value="1885782.09" step="0.01" />
+                    </div>
+                    <div class="form-group">
+                        <label>Hesaplama Ayı</label>
+                        <select id="ay">
+                            <option value="1">Ocak</option>
+                            <option value="2">Şubat</option>
+                            <option value="3">Mart</option>
+                            <option value="4">Nisan</option>
+                            <option value="5">Mayıs</option>
+                            <option value="6">Haziran</option>
+                            <option value="7">Temmuz</option>
+                            <option value="8">Ağustos</option>
+                            <option value="9">Eylül</option>
+                            <option value="10" selected>Ekim</option>
+                            <option value="11">Kasım</option>
+                            <option value="12">Aralık</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Sosyal Yardım (TL)</label>
+                        <input type="number" id="sosyalYardim" value="3540.74" step="0.01" />
+                    </div>
+                    <div class="form-group">
+                        <label>Revizyon Primi (TL)</label>
+                        <input type="number" id="revizyonPrimi" value="8604.00" step="0.01" />
+                    </div>
+                    <div class="form-group">
+                        <label>Ek Yetki Tazminatı (TL)</label>
+                        <input type="number" id="ekYetkiTazminati" value="7198.00" step="0.01" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="sendika" checked />
+                        <label for="sendika">Sendika Aidatı var</label>
+                    </div>
+                    <div class="form-group" style="flex:2; text-align:right; font-size:13px; color:#5e6f8d;">
+                        <span class="text-muted">(işaretliyse muafiyet ve kesinti uygulanır)</span>
+                    </div>
+                </div>
+
+                <button class="btn-calculate" id="hesaplaBtn">🚀 Hesapla</button>
+            </div>
+
+            <!-- SAĞ: BORDRO ÖZETİ -->
+            <div class="summary-section">
+                <div class="summary-header">
+                    <h2>📄 Bordro Özeti</h2>
+                    <div class="ay-bilgisi" id="ozetAy">Ekim 2026</div>
+                </div>
+                <div class="summary-body" id="summaryBody">
+                    <!-- dinamik içerik -->
+                    <div id="sonucPlaceholder">
+                        <div class="summary-item">
+                            <span class="label">Brüt Kazanç</span>
+                            <span class="value" id="sonucBrut">0.00</span>
+                        </div>
+                        <hr class="summary-divider" />
+
+                        <div class="summary-item">
+                            <span class="label">SGK İşçi Payı (%14)</span>
+                            <span class="value negative" id="sonucSGK">0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">İşsizlik İşçi Payı (%1)</span>
+                            <span class="value negative" id="sonucIssizlik">0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Gelir Vergisi</span>
+                            <span class="value negative" id="sonucGelirVergisi">0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Damga Vergisi</span>
+                            <span class="value negative" id="sonucDamga">0.00</span>
+                        </div>
+                        <div class="summary-item" id="sendikaSatiri" style="display:none;">
+                            <span class="label">Sendika Aidatı</span>
+                            <span class="value negative" id="sonucSendika">0.00</span>
+                        </div>
+
+                        <hr class="summary-divider" />
+
+                        <div class="summary-item" style="font-weight:600;">
+                            <span class="label">Toplam Kesinti</span>
+                            <span class="value negative" id="sonucToplamKesinti">0.00</span>
+                        </div>
+
+                        <div class="summary-total">
+                            <span class="label">💰 Ödenecek Net</span>
+                            <span class="value net" id="sonucNet">0.00</span>
+                        </div>
+
+                        <div class="summary-detail" id="detayBilgi">
+                            <span>İkramiye:</span> <span id="detayIkramiye">-</span> &nbsp;·&nbsp;
+                            <span>Vardiya Primi:</span> <span id="detayVardiya">-</span> &nbsp;·&nbsp;
+                            <span>Kümüle Matrah:</span> <span id="detayKumule">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  VERİ TABLOLARI
+        // ============================================================
+
+        // 1. Kıdem Ücretleri (01–35)
+        const kidemUcretleri = {
+            1: 38192, 2: 39374, 3: 40457, 4: 41383, 5: 42743,
+            6: 43740, 7: 44810, 8: 46110, 9: 47145, 10: 48361,
+            11: 49460, 12: 50455, 13: 51754, 14: 52896, 15: 53837,
+            16: 54918, 17: 56119, 18: 57359, 19: 58332, 20: 59515,
+            21: 60688, 22: 61819, 23: 62993, 24: 64078, 25: 65093,
+            26: 66386, 27: 67540, 28: 68574, 29: 69648, 30: 70924,
+            31: 72002, 32: 73090, 33: 74426, 34: 75386, 35: 76605
+        };
+
+        // 2. İş Tazminatı Matrisi
+        const isTazminati = {
+            "03.1": {
+                "A0": 32073, "A1": 39380, "A": 42890, "B": 44395, "C": 45845, "D": 47312,
+                "E": 48973, "F": 50626, "G": 52326, "H": 54156, "I": 56031, "J": 57975,
+                "K": 59875, "L": 62047, "M": 62983, "N": 65211, "O": 67514
+            },
+            "05.1": {
+                "A0": 45575, "A1": 53571, "A": 83147, "B": 85132, "C": 86867, "D": 88738,
+                "E": 90794, "F": 92697, "G": 94859, "H": 96784, "I": 99144, "J": 101360,
+                "K": 103667, "L": 106278, "M": 107706, "N": 108800, "O": 111300
+            },
+            "10.0.A": {
+                "A0": 39681, "A1": 48770, "A": 76149, "B": 83237, "C": 88532, "D": 92575,
+                "E": 96843, "F": 101331, "G": 106027, "H": 110921, "I": 116168, "J": 121560,
+                "K": 127300, "L": 133242, "M": 136612, "N": 143105, "O": 149897
+            },
+            "10.0.B": {
+                "A0": 45153, "A1": 56094, "A": 76149, "B": 83237, "C": 88532, "D": 92575,
+                "E": 96843, "F": 101331, "G": 106027, "H": 110921, "I": 116168, "J": 121560,
+                "K": 127300, "L": 133242, "M": 136612, "N": 143105, "O": 149897
+            },
+            "10.3": {
+                "A0": 68564, "A1": 109293, "A": 116963, "B": 123064, "C": 129582, "D": 136687,
+                "E": 143960, "F": 152082, "G": 160363, "H": 169427, "I": 178985, "J": 189110,
+                "K": 199859, "L": 211704, "M": 218800, "N": 231817, "O": 245265
+            }
+        };
+
+        // 3. Vardiya Primi (İkili / Üçlü)
+        const vardiyaPrimi = {
+            1: { ikili: 5729, uclu: 11458 },
+            2: { ikili: 5906, uclu: 11812 },
+            3: { ikili: 6069, uclu: 12137 },
+            4: { ikili: 6207, uclu: 12415 },
+            5: { ikili: 6411, uclu: 12823 },
+            6: { ikili: 6561, uclu: 13122 },
+            7: { ikili: 6722, uclu: 13443 },
+            8: { ikili: 6917, uclu: 13833 },
+            9: { ikili: 7072, uclu: 14144 },
+            10: { ikili: 7254, uclu: 14508 },
+            11: { ikili: 7419, uclu: 14838 },
+            12: { ikili: 7568, uclu: 15137 },
+            13: { ikili: 7763, uclu: 15526 },
+            14: { ikili: 7934, uclu: 15869 },
+            15: { ikili: 8076, uclu: 16151 },
+            16: { ikili: 8238, uclu: 16475 },
+            17: { ikili: 8418, uclu: 16836 },
+            18: { ikili: 8604, uclu: 17208 },
+            19: { ikili: 8750, uclu: 17500 },
+            20: { ikili: 8927, uclu: 17855 },
+            21: { ikili: 9103, uclu: 18206 },
+            22: { ikili: 9273, uclu: 18546 },
+            23: { ikili: 9449, uclu: 18898 },
+            24: { ikili: 9612, uclu: 19223 },
+            25: { ikili: 9764, uclu: 19528 },
+            26: { ikili: 9958, uclu: 19916 },
+            27: { ikili: 10131, uclu: 20262 },
+            28: { ikili: 10286, uclu: 20572 },
+            29: { ikili: 10447, uclu: 20894 },
+            30: { ikili: 10639, uclu: 21277 },
+            31: { ikili: 10800, uclu: 21601 },
+            32: { ikili: 10964, uclu: 21927 },
+            33: { ikili: 11164, uclu: 22328 },
+            34: { ikili: 11308, uclu: 22616 },
+            35: { ikili: 11491, uclu: 22982 }
+        };
+
+        // ============================================================
+        //  SABİTLER
+        // ============================================================
+        const SGK_TAVANI = 297270.00;
+        const GELIR_VERGISI_ISTISNASI = 4211.33;   // aylık asgari ücret GV istisnası
+        const DAMGA_VERGISI_ISTISNASI = 250.70;    // aylık asgari ücret DV istisnası
+        const SENDIKA_AIDATI = 2608.50;
+        const SENDIKA_MUAFIYETI = 3650.00;
+
+        // 2026 Gelir Vergisi Dilimleri (2025 dilimleri kullanılmıştır)
+        const VERGI_DILIMLERI = [
+            { min: 0, max: 110000, oran: 0.15 },
+            { min: 110000, max: 230000, oran: 0.20 },
+            { min: 230000, max: 580000, oran: 0.27 },
+            { min: 580000, max: 3000000, oran: 0.35 },
+            { min: 3000000, max: Infinity, oran: 0.40 }
+        ];
+
+        // ============================================================
+        //  HESAPLAMA FONKSİYONU
+        // ============================================================
+        function hesapla() {
+            // 1. Girdileri oku
+            const grup = document.getElementById('grup').value;
+            const kademe = document.getElementById('kademe').value;
+            const kidem = parseInt(document.getElementById('kidem').value, 10);
+            const vardiyaTipi = document.getElementById('vardiya').value; // "ikili" veya "uclu"
+            const oncekiKumule = parseFloat(document.getElementById('oncekiKumule').value) || 0;
+            const sosyalYardim = parseFloat(document.getElementById('sosyalYardim').value) || 0;
+            const revizyonPrimi = parseFloat(document.getElementById('revizyonPrimi').value) || 0;
+            const ekYetkiTazminati = parseFloat(document.getElementById('ekYetkiTazminati').value) || 0;
+            const sendikaVar = document.getElementById('sendika').checked;
+            const ay = parseInt(document.getElementById('ay').value, 10);
+
+            // 2. Verileri çek
+            const isTazminatiTutar = isTazminati[grup]?.[kademe] || 0;
+            const kidemUcreti = kidemUcretleri[kidem] || 0;
+            const vardiyaPrimiTutar = (vardiyaTipi === 'ikili')
+                ? (vardiyaPrimi[kidem]?.ikili || 0)
+                : (vardiyaPrimi[kidem]?.uclu || 0);
+
+            // 3. İkramiye kontrolü (1,4,7,10. aylar)
+            const ikramiyeAylari = [1, 4, 7, 10];
+            let ikramiye = 0;
+            if (ikramiyeAylari.includes(ay)) {
+                ikramiye = isTazminatiTutar + kidemUcreti;
+            }
+
+            // 4. Brüt Kazanç
+            const toplamBrut = isTazminatiTutar + kidemUcreti + ikramiye +
+                vardiyaPrimiTutar + sosyalYardim + revizyonPrimi + ekYetkiTazminati;
+
+            // 5. SGK Kesintileri
+            const sgkMatrah = Math.min(toplamBrut, SGK_TAVANI);
+            const sgkIsciPayi = sgkMatrah * 0.14;
+            const issizlikIsciPayi = sgkMatrah * 0.01;
+
+            // 6. Sendika
+            let sendikaMuafiyeti = 0;
+            let sendikaKesintisi = 0;
+            if (sendikaVar) {
+                sendikaMuafiyeti = SENDIKA_MUAFIYETI;
+                sendikaKesintisi = SENDIKA_AIDATI;
+            }
+
+            // 7. Vergi Matrahı
+            const vergiMatrah = toplamBrut - (sgkIsciPayi + issizlikIsciPayi + sendikaMuafiyeti);
+            const yeniKumule = oncekiKumule + vergiMatrah;
+
+            // 8. Gelir Vergisi (kademeli)
+            let gelirVergisi = 0;
+            let kalan = yeniKumule;
+            for (const dilim of VERGI_DILIMLERI) {
+                if (kalan <= 0) break;
+                const dilimTutar = Math.min(kalan, dilim.max - dilim.min);
+                gelirVergisi += dilimTutar * dilim.oran;
+                kalan -= dilimTutar;
+            }
+            gelirVergisi = Math.max(0, gelirVergisi - GELIR_VERGISI_ISTISNASI);
+
+            // 9. Damga Vergisi
+            let damgaVergisi = toplamBrut * 0.00759 - DAMGA_VERGISI_ISTISNASI;
+            damgaVergisi = Math.max(0, damgaVergisi);
+
+            // 10. Toplam Kesinti ve Net
+            const toplamKesintiler = sgkIsciPayi + issizlikIsciPayi + gelirVergisi + damgaVergisi + sendikaKesintisi;
+            const net = toplamBrut - toplamKesintiler;
+
+            // ============================================================
+            //  SONUÇLARI EKRANA BAS
+            // ============================================================
+            document.getElementById('sonucBrut').textContent = toplamBrut.toFixed(2);
+            document.getElementById('sonucSGK').textContent = sgkIsciPayi.toFixed(2);
+            document.getElementById('sonucIssizlik').textContent = issizlikIsciPayi.toFixed(2);
+            document.getElementById('sonucGelirVergisi').textContent = gelirVergisi.toFixed(2);
+            document.getElementById('sonucDamga').textContent = damgaVergisi.toFixed(2);
+            document.getElementById('sonucToplamKesinti').textContent = toplamKesintiler.toFixed(2);
+            document.getElementById('sonucNet').textContent = net.toFixed(2);
+
+            // Sendika satırını göster/gizle
+            const sendikaSatiri = document.getElementById('sendikaSatiri');
+            if (sendikaVar) {
+                sendikaSatiri.style.display = 'flex';
+                document.getElementById('sonucSendika').textContent = sendikaKesintisi.toFixed(2);
+            } else {
+                sendikaSatiri.style.display = 'none';
+            }
+
+            // Detay bilgileri
+            const ayAdlari = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
+            ];
+            document.getElementById('ozetAy').textContent = ayAdlari[ay - 1] + ' 2026';
+            document.getElementById('detayIkramiye').textContent = ikramiye > 0 ? ikramiye.toFixed(2) + ' TL (eklendi)' : 'Yok';
+            document.getElementById('detayVardiya').textContent = vardiyaPrimiTutar.toFixed(2) + ' TL';
+            document.getElementById('detayKumule').textContent = yeniKumule.toFixed(2) + ' TL';
+        }
+
+        // ============================================================
+        //  SAYFA YÜKLENDİĞİNDE OTOMATİK HESAPLA
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // İlk hesaplama
+            hesapla();
+
+            // Butona tıklandığında
+            document.getElementById('hesaplaBtn').addEventListener('click', hesapla);
+
+            // Enter tuşu ile hesaplama
+            document.querySelectorAll('input, select').forEach(el => {
+                el.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        hesapla();
+                    }
+                });
+            });
+
+            // Değişikliklerde otomatik hesaplama (isteğe bağlı)
+            // Buton üzerinden yapılması daha kontrollü, ama kullanıcı deneyimi için
+            // aşağıdaki satırları açarak anlık hesaplama yapabilirsiniz:
+            // document.querySelectorAll('input, select').forEach(el => {
+            //     el.addEventListener('change', hesapla);
+            //     el.addEventListener('input', hesapla);
+            // });
+        });
+    </script>
+
+</body>
+</html>
